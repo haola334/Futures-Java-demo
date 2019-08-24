@@ -38,6 +38,10 @@ public class TradeStrategy {
 
 	private volatile TradeType tradeType;
 
+	private volatile boolean lastProfit = false; //上次是否盈利
+
+	private volatile TradeType lastTradeType = TradeType.kong;
+
 	private AtomicLong id = new AtomicLong(0);
 
 
@@ -140,13 +144,21 @@ public class TradeStrategy {
 			recentTrade = hbdmClient.getRecentTrade();
 		}
 
+		long currentId = id.incrementAndGet();
+
 		int code = (int)(System.currentTimeMillis() % 2);
 
-		tradeType = TradeType.fromCode(code);
+		if (!lastProfit) {
+			tradeType = (lastTradeType == TradeType.duo ? TradeType.kong : TradeType.duo);
+			logger.info("交易id：{}, 上次是否盈利：{}, 本次交易类型为：{}", id.get(), lastProfit, tradeType);
+
+			lastTradeType = tradeType;
+		} else {
+			logger.info("交易id：{}, 上次是否盈利：{}, 本次交易类型为：{}", id.get(), lastProfit, tradeType);
+		}
 
 		buyPrice = recentTrade.getPrice();
 
-		long currentId = id.incrementAndGet();
 
 		logger.info("开始买入，交易id: {}, 交易类型为： {},  成交价格： {}", currentId, tradeType.getText(), recentTrade.getPrice());
 
@@ -155,6 +167,9 @@ public class TradeStrategy {
 
 
 	private void sell(BigDecimal delta) {
+
+		lastProfit = delta.compareTo(new BigDecimal(0)) > 0;
+
 		totalMoney = totalMoney.add(delta);
 		logger.info("开始卖出，交易id：{}, 收益：{}, 总本金剩余： {}", id.get(), delta, totalMoney);
 	}

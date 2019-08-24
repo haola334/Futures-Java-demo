@@ -41,7 +41,7 @@ public class HbdmClient {
 
 		}
 		catch (Exception e) {
-			logger.error("get recent trace error!", e);
+			logger.error("get recent trace error!,{}", e.getMessage());
 		}
 
 		return null;
