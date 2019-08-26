@@ -16,7 +16,7 @@ public class CalculateTradeMain {
 
 		BigDecimal tradeMoney = new BigDecimal("300");
 		BigDecimal beishu = new BigDecimal("20"); //杠杆倍数
-		BigDecimal buyPrice = new BigDecimal("3.629"); //开仓价
+		BigDecimal buyPrice = new BigDecimal("3.603"); //开仓价
 
 		boolean duo = false; //做多还是做空
 
